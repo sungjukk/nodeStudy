@@ -20,8 +20,32 @@ app.use(session({
 
 var passport = require("./router/passport")(app);
 
+
+//filter
+/*
+app.use("/*",function(req,res, next) {
+	if (req.isAuthenticated())
+	{
+		console.log('인증성공');
+	} else {
+		console.log('인증실패');
+	}
+	next();
+});
+*/
+
+//filter
+function IsAuthenticated(req,res,next) {
+	if (req.isAuthenticated())
+	{
+		next();
+	} else {
+		res.redirect('/');
+	}
+}
+
 app.use("/login", require("./router/login")(passport));
-app.use("/quiz", require("./router/quiz"));
+app.use("/quiz",IsAuthenticated,require("./router/quiz"));
 
 app.get('/',function(req,res){
 	var sess = req.user;
